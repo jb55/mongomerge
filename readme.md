@@ -11,7 +11,7 @@
 
 ## Usage
 
-    $ mongomerge -c user < user_update.csv
+    $ mongomerge -d database -c collection < user_update.csv
 
 ## License
 
