@@ -8,6 +8,7 @@ var debug = require('debug')('mongomerge')
 var parse = require('../lib/parse');
 var headerline = argv.headerline;
 var indices, header;
+var updated = 0;
 
 headerline = headerline == null? true : headerline;
 
@@ -32,6 +33,7 @@ function handle(data, cb){
 
   debug("query %j update %j", query, update);
   collection.update(query, update, { multi: false }, function(err){
+    if (!err) updated++;
     cb(err);
   });
 }
@@ -55,6 +57,7 @@ csv()
 })
 
 queue.drain = function(){
+  console.log("%s documents updated", updated);
   debug("draining");
   db.close();
 }
