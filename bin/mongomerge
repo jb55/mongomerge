@@ -1,16 +1,18 @@
 #!/usr/bin/env node
 
-var argv = require('minimist')(process.argv.slice(2))
-var mongojs = require('mongojs')
-var csv = require('csv')
-var async = require('async')
-var debug = require('debug')('mongomerge')
+var argv = require('minimist')(process.argv.slice(2));
+var mongojs = require('mongojs');
+var csv = require('csv');
+var async = require('async');
+var debug = require('debug')('mongomerge');
 var parse = require('../lib/parse');
 var headerline = argv.headerline;
+var ignoreEmpty = argv.ignoreEmpty;
 var indices, header;
 var updated = 0;
 
 headerline = headerline == null? true : headerline;
+ignoreEmpty = ignoreEmpty == null? true : ignoreEmpty;
 
 if (!argv.c)
   fail('-c [collection] required');
@@ -23,10 +25,12 @@ function handle(data, cb){
   var update = { $set: {} };
   var ind = indices["_id"];
   var oid = record[ind];
-  var query = { _id: parse.objectId(oid) };
+  var parsed = parse.objectId(oid);
+  var query = { _id: parsed };
 
   record.forEach(function(elem, i){
-    update.$set[header[i]] = elem;
+    if (!(elem === "" && ignoreEmpty))
+      update.$set[header[i]] = elem;
   });
 
   delete update.$set._id;
@@ -38,7 +42,7 @@ function handle(data, cb){
   });
 }
 
-queue = async.queue(handle, argv.j || 20)
+queue = async.queue(handle, argv.j || 20);
 
 csv()
 .from.stream(process.stdin)
@@ -54,13 +58,13 @@ csv()
         console.error("ERROR: %s", err);
     });
   }
-})
+});
 
 queue.drain = function(){
   console.log("%s documents updated", updated);
   debug("draining");
   db.close();
-}
+};
 
 process.stdin.resume();
 
