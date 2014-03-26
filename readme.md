@@ -1,7 +1,9 @@
 
 # mongomerge
 
-  A `mongoimport --csv --upsert` that merges things properly
+  A `mongoimport --csv --upsert` that merges strings properly
+
+  [![Build Status](https://travis-ci.org/jb55/mongomerge.png)](https://travis-ci.org/jb55/mongomerge)
 
 ## Installation
 
