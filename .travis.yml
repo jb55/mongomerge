@@ -1,4 +1,5 @@
 language: node_js
+services: mongodb
 env:
   - DEBUG="mongomerge*"
 node_js:
