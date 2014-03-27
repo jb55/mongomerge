@@ -66,8 +66,6 @@ queue.drain = function(){
   db.close();
 };
 
-process.stdin.resume();
-
 var first = true;
 function fail(msg) {
   console.error(msg);

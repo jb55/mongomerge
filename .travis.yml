@@ -1,6 +1,6 @@
 language: node_js
 env:
-  - DEBUG="mongomerge"
+  - DEBUG="mongomerge*"
 node_js:
   - "0.8"
   - "0.10"
