@@ -22,6 +22,6 @@
     "better-assert": "~1.0.0",
     "mocha": "~1.18.2",
     "comandante": "0.0.1",
-    "through": "^2.3.4"
+    "through": "~2.3.4"
   }
 }
