@@ -27,8 +27,8 @@ function handle(collection, data, opts, cb){
     return cb && cb(null, 0)
   }
 
-  collection.update(query, update, { multi: false }, function(err, _, updated){
-    cb && cb(err, 1);
+  collection.update(query, update, { multi: false }, function(err, doc, other){
+    cb && cb(err, doc, other);
   });
 }
 

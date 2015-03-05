@@ -29,9 +29,9 @@ function handle(data, done) {
   update(collection, data.record, {
     ignoreEmpty: ignoreEmpty,
     dryRun: dryRun
-  }, function (err, upd) {
-    updated += upd
-    done(err, upd)
+  }, function (err, doc) {
+    updated += doc.n
+    done(err, doc)
   })
 }
 
