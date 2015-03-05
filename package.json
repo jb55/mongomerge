@@ -12,16 +12,17 @@
     "test": "mocha --reporter spec"
   },
   "dependencies": {
-    "minimist": "0.0.8",
-    "csv": "~0.3.7",
-    "mongojs": "~0.10.0",
     "async": "~0.2.10",
-    "debug": "~0.7.4"
+    "csv-parser": "^1.5.0",
+    "debug": "~0.7.4",
+    "minimist": "0.0.8",
+    "mongodb-extended-json": "^1.1.2",
+    "mongojs": "~0.10.0"
   },
   "devDependencies": {
     "better-assert": "~1.0.0",
     "mocha": "~1.18.2",
     "comandante": "0.0.1",
-    "through": "~2.3.4"
+    "through": "^2.3.4"
   }
 }

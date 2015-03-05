@@ -1,72 +1,60 @@
 #!/usr/bin/env node
 
-var argv = require('minimist')(process.argv.slice(2));
+var argv = require('minimist')(process.argv.slice(2), {
+  boolean: ['dryRun', 'ignoreEmpty', 'csv', 'headerline']
+});
+
 var mongojs = require('mongojs');
-var csv = require('csv');
+var csv = require('csv-parser');
+var EJSON = require('mongodb-extended-json');
 var async = require('async');
 var debug = require('debug')('mongomerge');
-var parse = require('../lib/parse');
-var headerline = argv.headerline;
-var ignoreEmpty = argv.ignoreEmpty;
-var indices, header;
-var updated = 0;
+var update = require('../')
 
-headerline = headerline == null? true : headerline;
-ignoreEmpty = ignoreEmpty == null? true : ignoreEmpty;
+var ignoreEmpty = argv.ignoreEmpty;
+var isCsv = argv.csv;
+
+header = argv.header == null? true : argv.header
+ignoreEmpty = argv.ignoreEmpty == null? true : argv.ignoreEmpty;
+dryRun = argv.dryRun == null ? false : argv.dryRun;
 
 if (!argv.c)
   fail('-c [collection] required');
 
+var updated = 0;
 var db = mongojs(argv.d || 'test', [argv.c]);
 var collection = db.collection(argv.c);
 
-function handle(data, cb){
-  var record = data.record;
-  var update = { $set: {} };
-  var ind = indices["_id"];
-  var oid = record[ind];
-  var parsed = parse.objectId(oid);
-  var query = { _id: parsed };
-
-  record.forEach(function(elem, i){
-    if (!(elem === "" && ignoreEmpty))
-      update.$set[header[i]] = elem;
-  });
-
-  delete update.$set._id;
-
-  debug("query %j update %j", query, update);
-  collection.update(query, update, { multi: false }, function(err){
-    if (!err) updated++;
-    cb(err);
-  });
+function handle(data, done) {
+  update(collection, data.record, {
+    ignoreEmpty: ignoreEmpty,
+    dryRun: dryRun
+  }, function (err, upd) {
+    updated += upd
+    done(err, upd)
+  })
 }
 
 queue = async.queue(handle, argv.j || 20);
 
-csv()
-.from.stream(process.stdin)
-.on('record', function(record){
-  if (first) {
-    indices = parse.header(record);
-    header = record;
-    first = false;
-  }
-  else {
-    queue.push({ record: record }, function(err){
-      if (err)
-        console.error("ERROR: %s", err);
-    });
-  }
-});
+// TODO (jb55): fix csv parser
+var parser = isCsv ? csv : EJSON.createParseStream.bind(null, false)
+
+process.stdin
+.pipe(parser())
+.on('data', function(record) {
+  queue.push({ record: record }, function(err){
+    if (err)
+      console.error("ERROR: %s", err);
+  });
+})
 
 queue.drain = function(){
-  console.log("%s documents updated", updated);
+  console.error("%s documents updated", updated);
   debug("draining");
   db.close();
 };
 
-var first = true;
 function fail(msg) {
   console.error(msg);
   process.exit(1);
