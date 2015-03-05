@@ -1,7 +1,7 @@
 
 # mongomerge
 
-  A `mongoimport --csv --upsert` that merges strings properly
+  A `mongoimport` that $set's properties
 
   [![Build Status](https://travis-ci.org/jb55/mongomerge.png)](https://travis-ci.org/jb55/mongomerge)
 
@@ -13,7 +13,7 @@
 
 ## Usage
 
-    $ mongomerge -d database -c collection < user_update.csv
+    $ mongomerge -d database -c collection < user_update.json
 
 ## License
 

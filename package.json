@@ -1,7 +1,7 @@
 {
   "name": "mongomerge",
   "description": "mongoimport --upsert that does proper merging",
-  "version": "0.0.2",
+  "version": "1.0.0",
   "repository": {
     "url": "git://github.com/jb55/mongomerge.git"
   },
