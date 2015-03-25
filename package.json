@@ -15,6 +15,7 @@
     "async": "~0.2.10",
     "csv-parser": "^1.5.0",
     "debug": "~0.7.4",
+    "defined": "0.0.0",
     "minimist": "0.0.8",
     "mongodb-extended-json": "^1.1.2",
     "mongojs": "~0.10.0"
