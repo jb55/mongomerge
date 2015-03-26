@@ -16,6 +16,9 @@ var async = require('async')
 var debug = require('debug')('mongomerge')
 var update = require('../')
 
+// globals
+var total = 0
+
 // options
 
 var ignoreEmpty = defined(argv.ignoreEmpty, false)
@@ -53,6 +56,7 @@ var parser = isCsv ? csv.bind(null, { separator: delim })
 process.stdin
 .pipe(parser())
 .on('data', function(record) {
+  total += 1
   queue.push({ record: record }, function(err){
     if (err)
       console.error('ERROR: %s', err)
@@ -61,10 +65,15 @@ process.stdin
 
 queue.drain = function(){
   if (dryRun) {
-    console.error('would update %s documents', updated)
+    console.error('would update (%s / %s) documents', updated, total)
   } else {
-    console.error('%s documents updated', updated)
+    console.error('(%s / %s) documents updated', updated, total)
   }
+
+  // error exit if we don't update all
+  if (updated < total)
+    process.exit(2)
+
   debug('draining')
   db.close()
 }
@@ -84,10 +93,5 @@ function usage (msg) {
   console.log('    -k,--key         primary key to use (default: _id)')
   console.log('    -s,--separator   csv separator')
   console.log('')
-  process.exit(1)
-}
-
-function fail(msg) {
-  console.error(msg)
   process.exit(1)
 }
