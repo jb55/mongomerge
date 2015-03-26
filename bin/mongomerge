@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 var argv = require('minimist')(process.argv.slice(2), {
-  boolean: ['dryRun', 'ignoreEmpty', 'csv', 'headerline'],
+  boolean: ['dryRun', 'ignoreEmpty', 'csv', 'headerline', 'parseNumbers'],
   alias: {
     key: 'k',
     separator: 's'
@@ -16,14 +16,16 @@ var async = require('async')
 var debug = require('debug')('mongomerge')
 var update = require('../')
 
-var ignoreEmpty = argv.ignoreEmpty
+// options
 
+var ignoreEmpty = defined(argv.ignoreEmpty, false)
 var header = defined(argv.header, true)
 var ignoreEmpty = defined(argv.ignoreEmpty, true)
 var key = defined(argv.key, true)
 var dryRun = defined(argv.dryRun, false)
 var delim = defined(argv.separator, ',')
 var isCsv = defined(argv.csv, false)
+var parseNumbers = defined(argv.parseNumbers, isCsv)
 
 if (!argv.c) usage()
 
@@ -35,6 +37,7 @@ function handle(data, done) {
   update(collection, data.record, {
     ignoreEmpty: ignoreEmpty,
     key: key,
+    parseNumbers: parseNumbers,
     dryRun: dryRun
   }, function (err, doc) {
     updated += doc.n
@@ -57,7 +60,11 @@ process.stdin
 })
 
 queue.drain = function(){
-  console.error('%s documents updated', updated)
+  if (dryRun) {
+    console.error('would update %s documents', updated)
+  } else {
+    console.error('%s documents updated', updated)
+  }
   debug('draining')
   db.close()
 }

@@ -16,6 +16,7 @@ function handle (collection, data, opts, cb) {
 
   Object.keys(data).forEach(function (prop) {
     var elem = data[prop]
+    elem = opts.parseNumbers === true && !isNaN(+elem) ? +elem : elem
     if (!(elem === '' && opts.ignoreEmpty)) {
       update.$set[prop] = elem
     }
@@ -39,7 +40,7 @@ function handle (collection, data, opts, cb) {
       }
 
       console.log("(dry run) would update '%s' with %j", keyVal, update)
-      return cb && cb(null, { n: 0 })
+      return cb && cb(null, { n: 1 })
     })
     return
   }
