@@ -39,7 +39,7 @@ var collection = db.collection(argv.c)
 function handle(data, done) {
   update(collection, data.record, {
     ignoreEmpty: ignoreEmpty,
-    key: key,
+    key: argv.key,
     parseNumbers: parseNumbers,
     dryRun: dryRun
   }, function (err, doc) {
