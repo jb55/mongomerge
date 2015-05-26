@@ -24,7 +24,6 @@ var total = 0
 var ignoreEmpty = defined(argv.ignoreEmpty, false)
 var header = defined(argv.header, true)
 var ignoreEmpty = defined(argv.ignoreEmpty, true)
-var key = defined(argv.key, true)
 var dryRun = defined(argv.dryRun, false)
 var delim = defined(argv.separator, ',')
 var isCsv = defined(argv.csv, false)
